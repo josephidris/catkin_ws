@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "al5d_arm")
+set(al5d_arm_MAINTAINER "joseph idris <joseph.idris@uoit.net>")
+set(al5d_arm_DEPRECATED "")
+set(al5d_arm_VERSION "0.0.0")
+set(al5d_arm_BUILD_DEPENDS "roscpp" "rospy" "std_msgs" "message_generation")
+set(al5d_arm_RUN_DEPENDS "roscpp" "rospy" "std_msgs" "message_runtime")
+set(al5d_arm_BUILDTOOL_DEPENDS "catkin")

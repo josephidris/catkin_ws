@@ -1,0 +1,67 @@
+#!/usr/bin/env python
+import roslib
+roslib.load_manifest('al5d_arm')
+
+import rospy
+import math
+import time
+from geometry_msgs.msg import Point
+from geometry_msgs.msg import Quaternion
+
+shoulder_height = 0.06985
+shoulder_elbow = 0.14605
+elbow_wrist = 0.1850
+wrist_endpoint = 0.0873
+
+class calckin(object):
+        def __init__(self):
+                rospy.init_node('calckin')
+                self.current_coord = Point()
+                self.next_coord = Point()
+                self.current_angles = Quaternion()
+                self.next_angles = Quaternion()
+                
+                self.angle_pub = rospy.Publisher('angles',Quaternion)
+                coord_sub = rospy.Subscriber('coord',Point,self.inv_callback)
+
+        def inv_callback(self,data):
+                x = data.x
+                y = data.y
+                z = data.z
+                grip_angle = 0
+                base_angle = 0
+                
+                d = math.sqrt(x**2 + y**2)
+                z_prime = z - shoulder_height
+                d -= math.cos(grip_angle)*wrist_endpoint
+                z_prime -= math.sin(grip_angle)*wrist_endpoint
+                l1 = shoulder_elbow
+                l2 = elbow_wrist
+                numerator = d**2 + z_prime**2 - l1**2 - l2**2
+                denominator = 2*l1*l2
+                elbow_angle = math.atan2(math.sqrt(1 - (numerator/denominator)**2), numerator / denominator)
+                if elbow_angle > 0:
+                        elbow_angle = math.atan2(-math.sqrt(1 - (numerator / denominator)**2), numerator / denominator)
+                k1 = l1 + l2 * math.cos(elbow_angle)
+                k2 = l2 * math.sin(elbow_angle)
+                shoulder_angle = math.atan2(z_prime, d) - math.atan2(k2, k1)
+                wrist_angle = grip_angle - shoulder_angle - elbow_angle
+                if x or y:
+                        base_angle = math.atan2(y, x)
+
+                self.current_angles.x = base_angle
+                self.current_angles.y = shoulder_angle
+                self.current_angles.z = elbow_angle
+                self.current_angles.w = grip_angle
+                
+                angle_pub.publish(current_angles)
+                rospy.loginfo("Base angle = %f, shoulder_angle = %f, elbow_angle = %f, wrist_angle = %f",current_angles.x,current_angles.y,current_angles.z,current_angles.w)
+
+if __name__ == '__main__':
+        obj = calckin()
+        try:
+                rospy.spin()
+        except rospy.ROSInterruptException:
+                pass
+                
+                

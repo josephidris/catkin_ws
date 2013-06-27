@@ -1,0 +1,7 @@
+CATKIN_PACKAGE_PREFIX=""
+PROJECT_ABSOLUTE_INCLUDE_DIRS="/home/joseph/catkin_ws/devel/include;/home/joseph/catkin_ws/src/al5d_arm/include"
+PROJECT_CATKIN_DEPENDS="message_runtime;roscpp;rospy;std_msgs"
+PKG_CONFIG_LIBRARIES_WITH_PREFIX="-lal5d_arm"
+PROJECT_NAME="al5d_arm"
+PROJECT_SPACE_DIR="/home/joseph/catkin_ws/devel"
+PROJECT_VERSION="0.0.0"
